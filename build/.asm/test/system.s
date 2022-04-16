@@ -1,28 +1,22 @@
 	.file "system.pas"
 # Begin asmlist al_procedures
 
+.section .text.n_system_$$_fpc_initializeunits,"x"
+	.balign 16,0x90
+SYSTEM_$$_FPC_INITIALIZEUNITS:
+.Lc1:
+# [system.pas]
+# [243] begin end;
+	ret
+.Lc2:
+
 .section .text.n_system$_$tvmt_$__$$_getvparent$$pvmt,"x"
 	.balign 16,0x90
 .globl	SYSTEM$_$TVMT_$__$$_GETVPARENT$$PVMT
 SYSTEM$_$TVMT_$__$$_GETVPARENT$$PVMT:
-.Lc1:
-# Var $result located in register rax
-# Var $self located in register rcx
-# [system.pas]
-# [241] begin
-# Var $result located in register rax
-# [242] result := nil;
-	xorl	%eax,%eax
-# [243] end;
-	ret
-.Lc2:
-
-.section .text.n_fpc_get_input,"x"
-	.balign 16,0x90
-.globl	fpc_get_input
-fpc_get_input:
 .Lc3:
 # Var $result located in register rax
+# Var $self located in register rcx
 # [246] begin
 # Var $result located in register rax
 # [247] result := nil;
@@ -31,18 +25,32 @@ fpc_get_input:
 	ret
 .Lc4:
 
+.section .text.n_fpc_get_input,"x"
+	.balign 16,0x90
+.globl	fpc_get_input
+fpc_get_input:
+.Lc5:
+# Var $result located in register rax
+# [251] begin
+# Var $result located in register rax
+# [252] result := nil;
+	xorl	%eax,%eax
+# [253] end;
+	ret
+.Lc6:
+
 .section .text.n_fpc_readln_end,"x"
 	.balign 16,0x90
 .globl	fpc_readln_end
 fpc_readln_end:
 .globl	FPC_READLN_END
 FPC_READLN_END:
-.Lc5:
-# [251] begin end;
+.Lc7:
+# [256] begin end;
 	movq	%rcx,%rax
 # Var f located in register rax
 	ret
-.Lc6:
+.Lc8:
 
 .section .text.n_fpc_do_exit,"x"
 	.balign 16,0x90
@@ -50,65 +58,61 @@ FPC_READLN_END:
 fpc_do_exit:
 .globl	FPC_DO_EXIT
 FPC_DO_EXIT:
-.Lc7:
-# [254] begin end;
+.Lc9:
+# [259] begin end;
 	ret
-.Lc8:
+.Lc10:
 
 .section .text.n_fpc_iocheck,"x"
 	.balign 16,0x90
 .globl	fpc_iocheck
 fpc_iocheck:
-.Lc9:
-# [257] begin end;
+.Lc11:
+# [262] begin end;
 	ret
-.Lc10:
+.Lc12:
+
+.section .text.n_fpc_ansistr_assign,"x"
+	.balign 16,0x90
+.globl	fpc_ansistr_assign
+fpc_ansistr_assign:
+# [273] procedure fpc_AnsiStr_decr_ref(var s: Pointer); [public, alias: 'FPC_ANSISTR_DECR_REF']; compilerproc;
+	jmp	_$dll$laz_rtl$AnsiStrAssign
 
 .section .text.n_fpc_ansistr_decr_ref,"x"
 	.balign 16,0x90
 .globl	fpc_ansistr_decr_ref
 fpc_ansistr_decr_ref:
-.Lc11:
-# [260] begin end;
+.globl	FPC_ANSISTR_DECR_REF
+FPC_ANSISTR_DECR_REF:
+.Lc13:
+# [274] begin end;
 	movq	%rcx,%rax
 # Var S located in register rax
 	ret
-.Lc12:
+.Lc14:
 
 .section .text.n_fpc_help_constructor,"x"
 	.balign 16,0x90
 .globl	fpc_help_constructor
 fpc_help_constructor:
-.Lc13:
+.Lc15:
 # Var $result located in register rax
 # Var _self located in register rcx
 # Var _vmt located in register rdx
 # Var _vmt_pos located in register r8d
-# [266] begin result := nil end;
+# [280] begin result := nil end;
 # Var $result located in register rax
 	xorl	%eax,%eax
 	ret
-.Lc14:
+.Lc16:
 
 .section .text.n_fpc_help_destructor,"x"
 	.balign 16,0x90
 .globl	fpc_help_destructor
 fpc_help_destructor:
-.Lc15:
-# [269] begin end;
-	movq	%rcx,%rax
-# Var _self located in register rax
-# Var _vmt located in register rdx
-# Var vmt_pos located in register r8d
-	ret
-.Lc16:
-
-.section .text.n_fpc_help_fail,"x"
-	.balign 16,0x90
-.globl	fpc_help_fail
-fpc_help_fail:
 .Lc17:
-# [272] begin end;
+# [283] begin end;
 	movq	%rcx,%rax
 # Var _self located in register rax
 # Var _vmt located in register rdx
@@ -116,14 +120,27 @@ fpc_help_fail:
 	ret
 .Lc18:
 
+.section .text.n_fpc_help_fail,"x"
+	.balign 16,0x90
+.globl	fpc_help_fail
+fpc_help_fail:
+.Lc19:
+# [286] begin end;
+	movq	%rcx,%rax
+# Var _self located in register rax
+# Var _vmt located in register rdx
+# Var vmt_pos located in register r8d
+	ret
+.Lc20:
+
 .section .text.n_fpc_reraise,"x"
 	.balign 16,0x90
 .globl	fpc_reraise
 fpc_reraise:
-.Lc19:
-# [275] begin end;
+.Lc21:
+# [289] begin end;
 	ret
-.Lc20:
+.Lc22:
 # End asmlist al_procedures
 # Begin asmlist al_rtti
 
@@ -132,7 +149,7 @@ fpc_reraise:
 .globl	RTTI_$SYSTEM_$$_formal
 RTTI_$SYSTEM_$$_formal:
 	.byte	0,7
-# [278] 
+# [292] 
 	.ascii	"$formal"
 
 .section .rodata.n_RTTI_$SYSTEM_$$_typedformal,"d"
@@ -1981,9 +1998,9 @@ RTTI_$SYSTEM_$$_PPVMT$indirect:
 # Begin asmlist al_dwarf_frame
 
 .section .debug_frame
-.Lc21:
-	.long	.Lc23-.Lc22
-.Lc22:
+.Lc23:
+	.long	.Lc25-.Lc24
+.Lc24:
 	.long	-1
 	.byte	1
 	.byte	0
@@ -1997,76 +2014,83 @@ RTTI_$SYSTEM_$$_PPVMT$indirect:
 	.uleb128	16
 	.uleb128	2
 	.balign 4,0
-.Lc23:
-	.long	.Lc25-.Lc24
-.Lc24:
-	.secrel32	.Lc21
-	.quad	.Lc1
-	.quad	.Lc2-.Lc1
-	.balign 4,0
 .Lc25:
 	.long	.Lc27-.Lc26
 .Lc26:
-	.secrel32	.Lc21
-	.quad	.Lc3
-	.quad	.Lc4-.Lc3
+	.secrel32	.Lc23
+	.quad	.Lc1
+	.quad	.Lc2-.Lc1
 	.balign 4,0
 .Lc27:
 	.long	.Lc29-.Lc28
 .Lc28:
-	.secrel32	.Lc21
-	.quad	.Lc5
-	.quad	.Lc6-.Lc5
+	.secrel32	.Lc23
+	.quad	.Lc3
+	.quad	.Lc4-.Lc3
 	.balign 4,0
 .Lc29:
 	.long	.Lc31-.Lc30
 .Lc30:
-	.secrel32	.Lc21
-	.quad	.Lc7
-	.quad	.Lc8-.Lc7
+	.secrel32	.Lc23
+	.quad	.Lc5
+	.quad	.Lc6-.Lc5
 	.balign 4,0
 .Lc31:
 	.long	.Lc33-.Lc32
 .Lc32:
-	.secrel32	.Lc21
-	.quad	.Lc9
-	.quad	.Lc10-.Lc9
+	.secrel32	.Lc23
+	.quad	.Lc7
+	.quad	.Lc8-.Lc7
 	.balign 4,0
 .Lc33:
 	.long	.Lc35-.Lc34
 .Lc34:
-	.secrel32	.Lc21
-	.quad	.Lc11
-	.quad	.Lc12-.Lc11
+	.secrel32	.Lc23
+	.quad	.Lc9
+	.quad	.Lc10-.Lc9
 	.balign 4,0
 .Lc35:
 	.long	.Lc37-.Lc36
 .Lc36:
-	.secrel32	.Lc21
-	.quad	.Lc13
-	.quad	.Lc14-.Lc13
+	.secrel32	.Lc23
+	.quad	.Lc11
+	.quad	.Lc12-.Lc11
 	.balign 4,0
 .Lc37:
 	.long	.Lc39-.Lc38
 .Lc38:
-	.secrel32	.Lc21
-	.quad	.Lc15
-	.quad	.Lc16-.Lc15
+	.secrel32	.Lc23
+	.quad	.Lc13
+	.quad	.Lc14-.Lc13
 	.balign 4,0
 .Lc39:
 	.long	.Lc41-.Lc40
 .Lc40:
-	.secrel32	.Lc21
-	.quad	.Lc17
-	.quad	.Lc18-.Lc17
+	.secrel32	.Lc23
+	.quad	.Lc15
+	.quad	.Lc16-.Lc15
 	.balign 4,0
 .Lc41:
 	.long	.Lc43-.Lc42
 .Lc42:
-	.secrel32	.Lc21
+	.secrel32	.Lc23
+	.quad	.Lc17
+	.quad	.Lc18-.Lc17
+	.balign 4,0
+.Lc43:
+	.long	.Lc45-.Lc44
+.Lc44:
+	.secrel32	.Lc23
 	.quad	.Lc19
 	.quad	.Lc20-.Lc19
 	.balign 4,0
-.Lc43:
+.Lc45:
+	.long	.Lc47-.Lc46
+.Lc46:
+	.secrel32	.Lc23
+	.quad	.Lc21
+	.quad	.Lc22-.Lc21
+	.balign 4,0
+.Lc47:
 # End asmlist al_dwarf_frame
 

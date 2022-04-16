@@ -1,35 +1,43 @@
 	.file "system.pas"
 # Begin asmlist al_procedures
 
+.section .text.n_system_$$_fpc_initializeunits,"x"
+	.balign 16,0x90
+SYSTEM_$$_FPC_INITIALIZEUNITS:
+.Lc1:
+# [system.pas]
+# [243] begin end;
+	ret
+.Lc2:
+
 .section .text.n_system$_$tvmt_$__$$_getvparent$$pvmt,"x"
 	.balign 16,0x90
 .globl	SYSTEM$_$TVMT_$__$$_GETVPARENT$$PVMT
 SYSTEM$_$TVMT_$__$$_GETVPARENT$$PVMT:
-.Lc1:
+.Lc3:
 # Var $result located in register rax
 # Var $self located in register rcx
-# [system.pas]
-# [245] begin
+# [246] begin
 # Var $result located in register rax
-# [246] result := nil;
+# [247] result := nil;
 	xorl	%eax,%eax
-# [247] end;
+# [248] end;
 	ret
-.Lc2:
+.Lc4:
 
 .section .text.n_fpc_get_input,"x"
 	.balign 16,0x90
 .globl	fpc_get_input
 fpc_get_input:
-.Lc3:
+.Lc5:
 # Var $result located in register rax
-# [250] begin
+# [251] begin
 # Var $result located in register rax
-# [251] result := nil;
+# [252] result := nil;
 	xorl	%eax,%eax
-# [252] end;
+# [253] end;
 	ret
-.Lc4:
+.Lc6:
 
 .section .text.n_fpc_readln_end,"x"
 	.balign 16,0x90
@@ -37,12 +45,12 @@ fpc_get_input:
 fpc_readln_end:
 .globl	FPC_READLN_END
 FPC_READLN_END:
-.Lc5:
-# [255] begin end;
+.Lc7:
+# [256] begin end;
 	movq	%rcx,%rax
 # Var f located in register rax
 	ret
-.Lc6:
+.Lc8:
 
 .section .text.n_fpc_do_exit,"x"
 	.balign 16,0x90
@@ -50,34 +58,26 @@ FPC_READLN_END:
 fpc_do_exit:
 .globl	FPC_DO_EXIT
 FPC_DO_EXIT:
-.Lc7:
-# [258] begin end;
+.Lc9:
+# [259] begin end;
 	ret
-.Lc8:
+.Lc10:
 
 .section .text.n_fpc_iocheck,"x"
 	.balign 16,0x90
 .globl	fpc_iocheck
 fpc_iocheck:
-.Lc9:
-# [261] begin end;
+.Lc11:
+# [262] begin end;
 	ret
-.Lc10:
+.Lc12:
 
 .section .text.n_fpc_ansistr_assign,"x"
 	.balign 16,0x90
 .globl	fpc_ansistr_assign
 fpc_ansistr_assign:
-.globl	FPC_ANSISTR_ASSIGN
-FPC_ANSISTR_ASSIGN:
-.Lc11:
-# [264] begin
-	movq	%rcx,%rax
-# Var DestS located in register rax
-# Var S2 located in register rdx
-# [266] end;
-	ret
-.Lc12:
+# [273] procedure fpc_AnsiStr_decr_ref(var s: Pointer); [public, alias: 'FPC_ANSISTR_DECR_REF']; compilerproc;
+	jmp	_$dll$laz_rtl$AnsiStrAssign
 
 .section .text.n_fpc_ansistr_decr_ref,"x"
 	.balign 16,0x90
@@ -86,7 +86,7 @@ fpc_ansistr_decr_ref:
 .globl	FPC_ANSISTR_DECR_REF
 FPC_ANSISTR_DECR_REF:
 .Lc13:
-# [270] begin end;
+# [274] begin end;
 	movq	%rcx,%rax
 # Var S located in register rax
 	ret
@@ -101,7 +101,7 @@ fpc_help_constructor:
 # Var _self located in register rcx
 # Var _vmt located in register rdx
 # Var _vmt_pos located in register r8d
-# [276] begin result := nil end;
+# [280] begin result := nil end;
 # Var $result located in register rax
 	xorl	%eax,%eax
 	ret
@@ -112,7 +112,7 @@ fpc_help_constructor:
 .globl	fpc_help_destructor
 fpc_help_destructor:
 .Lc17:
-# [279] begin end;
+# [283] begin end;
 	movq	%rcx,%rax
 # Var _self located in register rax
 # Var _vmt located in register rdx
@@ -125,7 +125,7 @@ fpc_help_destructor:
 .globl	fpc_help_fail
 fpc_help_fail:
 .Lc19:
-# [282] begin end;
+# [286] begin end;
 	movq	%rcx,%rax
 # Var _self located in register rax
 # Var _vmt located in register rdx
@@ -138,7 +138,7 @@ fpc_help_fail:
 .globl	fpc_reraise
 fpc_reraise:
 .Lc21:
-# [285] begin end;
+# [289] begin end;
 	ret
 .Lc22:
 # End asmlist al_procedures
@@ -149,7 +149,7 @@ fpc_reraise:
 .globl	RTTI_$SYSTEM_$$_formal
 RTTI_$SYSTEM_$$_formal:
 	.byte	0,7
-# [288] 
+# [292] 
 	.ascii	"$formal"
 
 .section .rodata.n_RTTI_$SYSTEM_$$_typedformal,"d"

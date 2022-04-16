@@ -239,6 +239,9 @@ procedure fpc_do_exit; compilerproc;
 
 implementation
 
+procedure fpc_initializeunits; //cdecl; external name 'fpc_initializeunits';
+begin end;
+
 function TVmt.GetvParent: PVMT;
 begin
 	result := nil;
@@ -259,10 +262,7 @@ procedure fpc_iocheck; compilerproc;
 begin end;
 
 procedure AnsiStrAssign(var lhs: Pointer; rhs: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
-procedure fpc_ansistr_assign (Var DestS: Pointer; S2: Pointer);
-begin
-    AnsiStrAssign(DestS, S2);
-end;
+procedure fpc_ansistr_assign (Var DestS: Pointer; S2: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
 
 (*procedure fpc_AnsiStr_Assign (var DestS: Pointer; S2: Pointer); [public, Alias: 'FPC_ANSISTR_ASSIGN']; compilerproc;
 begin
