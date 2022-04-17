@@ -38,9 +38,12 @@ all: pre_tasks $(SAMPLE_EXE)
 # this section is user/developer speciefic.
 # you have to set on your own ...
 # --------------------------------------------------
-CC        = gcc    # i used MinGW-64 8.6.0
-FPC       = fpc    # tests with 3.2.0
-GDB       = gdb    # command line
+CC        = gcc     # i used MinGW-64 8.6.0
+FPC       = fpc     # tests with 3.2.0
+GDB       = gdb     # command line
+ASM       = as      # GNU assembler
+DLLTOOL   = dlltool # Windows 11 .DEF / .DLL tool
+NM        = nm
 
 # ---------------------------------------------------------
 # the command's below should be come with the MinGW Utils.
@@ -57,11 +60,12 @@ STRIP     = strip
 # gnu c/c++ speciefied compiler flags.
 # default: win64
 # ----------------------------------------
-CFLAGS    = -m64 -I. -O2 -DAPP_TYPE=$(APP_TYPE) -D$(OS_PLATFORM)
+CFLAGS    = -m64 -I. -O2 -DAPP_TYPE=$(APP_TYPE) -D$(OS_PLATFORM) \
+            -Wno-delete-incomplete \
+            -Wno-write-strings
 FPC_FLAGS = -CF32 -a -al -n -sh -st -Ur -Xd -Xe -Xm -WA -WR \
             -O2 -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
             -Px86_64 -Twin64
-
 GDB_FLAG  = -ggdb
 
 # -----------------------
@@ -318,7 +322,7 @@ Laz_WIN = $(Laz_DLL)win$(Laz_DOL)
 # this is a place-holder macro, to hold text read-able.
 # ------------------------------------------------------
 define dll_export =
-	$(ECHO) $(1)$(2)'$$''$$'$(3) >> $(4)
+	@$(ECHO) $(1)$(2)'$$''$$'$(3) >> $(4)
 endef
 
 # ---------------------------------------------------------------------
@@ -327,46 +331,47 @@ endef
 # so the size of the .dll file is smaller.
 # ----------------------------------------------------------------------
 define fpc_def =
-	$(ECHO) EXPORTS                        > $(1)
-	$(ECHO) fpc_ansistr_decr_ref          >> $(1)
-	$(ECHO) fpc_do_exit                   >> $(1)
-	$(ECHO) FPC_DO_EXIT                   >> $(1)
-	$(ECHO) fpc_get_input                 >> $(1)
-	$(ECHO) fpc_initializeunits           >> $(1)
-	$(ECHO) FPC_INITIALIZEUNITS           >> $(1)
-	$(ECHO) fpc_iocheck                   >> $(1)
-	$(ECHO) fpc_readln_end                >> $(1)
-	$(ECHO) FPC_READLN_END                >> $(1)
+	@$(ECHO) EXPORTS                        > $(1)
+    @$(ECHO) fpc_ansistr_assign            >> $(1)
+	@$(ECHO) fpc_ansistr_decr_ref          >> $(1)
+	@$(ECHO) fpc_do_exit                   >> $(1)
+	@$(ECHO) FPC_DO_EXIT                   >> $(1)
+	@$(ECHO) fpc_get_input                 >> $(1)
+	@$(ECHO) fpc_initializeunits           >> $(1)
+	@$(ECHO) FPC_INITIALIZEUNITS           >> $(1)
+	@$(ECHO) fpc_iocheck                   >> $(1)
+	@$(ECHO) fpc_readln_end                >> $(1)
+	@$(ECHO) FPC_READLN_END                >> $(1)
 endef
 
 # ------------------------------------------------------
 # rtl - run time library .def initions for laz_rtl.dll
 # ------------------------------------------------------
 define rtl_def =
-	$(ECHO) EXPORTS                        > $(1)
-    $(ECHO) $(Laz_RTL)High                >> $(1)
-	$(ECHO) $(Laz_RTL)LAZEXITPROCESS      >> $(1)
-	$(ECHO) $(Laz_RTL)LazExitProcess      >> $(1)
-	$(ECHO) $(Laz_RTL)LengthByte          >> $(1)
-	$(ECHO) $(Laz_RTL)LengthChar          >> $(1)
-	$(ECHO) $(Laz_RTL)LengthInteger       >> $(1)
-	$(ECHO) $(Laz_RTL)LengthString        >> $(1)
-    $(ECHO) $(Laz_RTL)LengthWord          >> $(1)
-    $(ECHO) $(Laz_RTL)Low                 >> $(1)
-	$(ECHO) $(Laz_RTL)LowerCase           >> $(1)
-	$(ECHO) $(Laz_RTL)ReadLn              >> $(1)
-	$(ECHO) $(Laz_RTL)UpperCase           >> $(1)
-    $(ECHO) $(Laz_RTL)WriteLnByte         >> $(1)
-    $(ECHO) $(Laz_RTL)WriteLnChar         >> $(1)
-    $(ECHO) $(Laz_RTL)WriteLnInteger      >> $(1)
-	$(ECHO) $(Laz_RTL)WriteLnString       >> $(1)
+	@$(ECHO) EXPORTS                        > $(1)
+    @$(ECHO) $(Laz_RTL)High                >> $(1)
+	@$(ECHO) $(Laz_RTL)LAZEXITPROCESS      >> $(1)
+	@$(ECHO) $(Laz_RTL)LazExitProcess      >> $(1)
+	@$(ECHO) $(Laz_RTL)LengthByte          >> $(1)
+	@$(ECHO) $(Laz_RTL)LengthChar          >> $(1)
+	@$(ECHO) $(Laz_RTL)LengthInteger       >> $(1)
+	@$(ECHO) $(Laz_RTL)LengthString        >> $(1)
+    @$(ECHO) $(Laz_RTL)LengthWord          >> $(1)
+    @$(ECHO) $(Laz_RTL)Low                 >> $(1)
+	@$(ECHO) $(Laz_RTL)LowerCase           >> $(1)
+	@$(ECHO) $(Laz_RTL)ReadLn              >> $(1)
+	@$(ECHO) $(Laz_RTL)UpperCase           >> $(1)
+    @$(ECHO) $(Laz_RTL)WriteLnByte         >> $(1)
+    @$(ECHO) $(Laz_RTL)WriteLnChar         >> $(1)
+    @$(ECHO) $(Laz_RTL)WriteLnInteger      >> $(1)
+	@$(ECHO) $(Laz_RTL)WriteLnString       >> $(1)
 endef
 
 # ------------------------------------------------------
 # fpv - Free Pascal TurboVision - textual app's ...
 # ------------------------------------------------------
 define fpv_def =
-	$(ECHO) EXPORTS                        > $(1)
+	@$(ECHO) EXPORTS                        > $(1)
 	$(call dll_export,$(TVision_TObject),_CREATE,QWORDBOOL,$(1))
 	$(call dll_export,$(TVision_TPalette),_CREATE,QWORDBOOL,$(1))
 	$(call dll_export,$(TVision_TMenuBar),_CREATE,QWORDBOOL,$(1))
@@ -381,17 +386,17 @@ define fpv_def =
 	$(call dll_export,$(TVision_TBackground),_DESTROY,,$(1))
 	$(call dll_export,$(TVision_TApplication),_DESTROY,,$(1))
 	#
-	$(ECHO) $(Laz_FPV)LazSetPalette    >> $(1)
-	$(ECHO) $(Laz_FPV)LazSetBackground >> $(1)
-	$(ECHO) $(Laz_FPV)LazSetMenuBar    >> $(1)
-	$(ECHO) $(Laz_FPV)LazSetStatusBar  >> $(1)
+	@$(ECHO) $(Laz_FPV)LazSetPalette    >> $(1)
+	@$(ECHO) $(Laz_FPV)LazSetBackground >> $(1)
+	@$(ECHO) $(Laz_FPV)LazSetMenuBar    >> $(1)
+	@$(ECHO) $(Laz_FPV)LazSetStatusBar  >> $(1)
 endef
 
 # ------------------------------------------------------
 # qt5 - graphical toolkit for gui application's ...
 # ------------------------------------------------------
 define qt5_def =
-	$(ECHO) EXPORTS                        > $(1)
+	@$(ECHO) EXPORTS                        > $(1)
 	$(call dll_export,$(QObject_QObject),_CREATE,QWORDBOOL,$(1))
 endef
 
@@ -401,23 +406,23 @@ endef
 # so your .exe files no longer be so biiigg ...
 # ------------------------------------------------------
 define vcl_def =
-	$(ECHO) EXPORTS                             > $(1)
-    $(ECHO) DllMainCRTStartup                   > $(1)
-    $(ECHO) _'$'dll$laz_vcl'$'TestA             > $(1)
-    $(ECHO) _'$'dll$laz_vcl'$'TForm_Create      > $(1)
-    $(ECHO) _'$'dll$laz_vcl'$'TObject_Create    > $(1)
+	@$(ECHO) EXPORTS                             > $(1)
+    @$(ECHO) DllMainCRTStartup                   > $(1)
+    @$(ECHO) _'$'dll$laz_vcl'$'TestA             > $(1)
+    @$(ECHO) _'$'dll$laz_vcl'$'TForm_Create      > $(1)
+    @$(ECHO) _'$'dll$laz_vcl'$'TObject_Create    > $(1)
 	$(call dll_export,$(Forms_TForm),_CREATE,QWORDBOOL,$(1))
 	$(call dll_export,$(Objects_TObject),_CREATE,QWORDBOOL,$(1))
-	$(ECHO) $(Objects_TObject)_TESTA      >> $(1)
+	@$(ECHO) $(Objects_TObject)_TESTA      >> $(1)
 endef
 
 # ------------------------------------------------------
 # win - windows 10 pro gui application's ...
 # ------------------------------------------------------
 define win_def =
-	$(ECHO) EXPORTS                        > $(1)
-	$(ECHO) $(Laz_WIN)ExitProcess         >> $(1)
-	$(ECHO) $(Laz_WIN)LazWaitMessage      >> $(1)
+	@$(ECHO) EXPORTS                        > $(1)
+	@$(ECHO) $(Laz_WIN)ExitProcess         >> $(1)
+	@$(ECHO) $(Laz_WIN)LazWaitMessage      >> $(1)
 endef
 
 # --------------------------------------------------------
@@ -426,11 +431,11 @@ endef
 # "import" symbols to call the functions in the .dll file
 # --------------------------------------------------------
 define dll_a =
-	dlltool                  \
+	@$(DLLTOOL)              \
 		--def     $(2)       \
 		--dllname $(subst lib,,$(subst .def,.dll,$(2))) \
 		--output-lib $(1)
-	$(STRIP) $(subst lib,,$(subst .def,.dll,$(2)))
+	@$(STRIP) $(subst lib,,$(subst .def,.dll,$(2)))
 endef
 
 # --------------------------------------------
@@ -447,7 +452,7 @@ sed_dbgbeg =^\#[[:space:]]*Begin[[:space:]]*asmlist[[:space:]]*al_dwarf_frame
 sed_dbgend =^\#[[:space:]]*End[[:space:]]*asmlist[[:space:]]*al_dwarf_frame
 
 define shlp =
-	$(SED) -i $(1) $(2)
+	@$(SED) -i $(1) $(2)
 endef
 
 # -------------------------------------------------------------
@@ -458,7 +463,7 @@ endef
 # stackoverflow research.
 # -------------------------------------------------------------
 define strip_compiler =
-	$(ECHO) remove compiler crap off: $(1)
+	@$(ECHO) remove compiler crap off: $(1)
     $(call shlp,$(subst ,$(;),'/$(sed_dbgbeg)/,/$(sed_dbgend)/d'),$(1))
 	$(call shlp,$(subst ,$(;),'/$(sed_asmbeg)_dwarf_frame/,/$(sed_asmend)_dwarf_frame/d'),$(1))
 	$(call shlp,$(subst ,$(;),'/$(sed_asmbeg)_globals/,/$(sed_asmend)_globals/d'),$(1))
@@ -498,14 +503,14 @@ define strip_compiler =
 endef
 
 define compile_strip =
-	$(call strip_compiler,$(2))
-	$(CC) $(CFLAGS) -o $(1) -c $(2)
+	@$(call strip_compiler,$(2))
+	@$(CC) $(CFLAGS) -o $(1) -c $(2)
 endef
 
 define pp_compile_strip =
-	$(FPC) -al -Aas $(FPC_FLAGS) -o$(1) $(2)
-	$(call strip_compiler,$(1))
-	$(CC) $(CFLAGS) \
+	@$(FPC) -al -Aas $(FPC_FLAGS) -o$(1) $(2)
+	@$(call strip_compiler,$(1))
+	@$(CC) $(CFLAGS) \
 		-o $(subst $(ASM_DIR),$(OBJ_DIR),$(subst .s,.o,$(1))) \
 		-c $(1)
 endef
@@ -518,9 +523,9 @@ endef
 # ------------------------------------------------------
 define make_dll =
 	@$(ECHO) create DLL $(1) ...
-	$(CC) -nostdlib -m64 -shared -o \
+	@$(CC) -nostdlib -m64 -shared -o \
 	$(subst lib,,$(1)) $(2) -lkernel32 -luser32
-	nm  $(subst lib,,$(1)) | grep " T " | sed 's/.* T //' \
+	@$(NM)  $(subst lib,,$(1)) | grep " T " | sed 's/.* T //' \
 	>   $(subst lib,,$(subst .dll,.def.tmp,$@))
 endef
 
@@ -646,13 +651,13 @@ $(CPP_OUT)/win/%.o: $(CPP_ASM)/win/%.s ; $(call compile_strip,$@,$<)
 # ---------------------------------------------
 # template: compile C files to .s assembler.
 # ---------------------------------------------
-$(CPP_ASM)/fpc/%.s: $(CPP_SRC)/fpc/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
-$(CPP_ASM)/rtl/%.s: $(CPP_SRC)/rtl/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/fpc/%.s: $(CPP_SRC)/fpc/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/rtl/%.s: $(CPP_SRC)/rtl/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
 #
-$(CPP_ASM)/fpv/%.s: $(CPP_SRC)/fpv/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
-$(CPP_ASM)/qt5/%.s: $(CPP_SRC)/qt5/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
-$(CPP_ASM)/vcl/%.s: $(CPP_SRC)/vcl/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
-$(CPP_ASM)/win/%.s: $(CPP_SRC)/win/%.cc ; $(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/fpv/%.s: $(CPP_SRC)/fpv/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/qt5/%.s: $(CPP_SRC)/qt5/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/vcl/%.s: $(CPP_SRC)/vcl/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
+$(CPP_ASM)/win/%.s: $(CPP_SRC)/win/%.cc ; @$(CC) $(CFLAGS) -S -o $@ $<
 
 # ---------------------------------------------
 # This section is optional, compile some test
@@ -662,30 +667,31 @@ SAMPLE_DIR = sample
 SAMPLE_EXE = $(SAMPLE_DIR)/test1$(EXEC_FILEEXT)
 
 $(ASM_DIR)/test/%.s: $(SAMPLE_DIR)/%.pas
-	$(FPC)  -al -Aas -CF32 -a -al -n -sh -st -Ur -Xd -Xe -Xm -WA -WR \
+	@$(FPC) -al -Aas -CF32 -a -al -n -sh -st -Ur -Xd -Xe -Xm -WA -WR \
 		-O2 -Mdelphi -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
 		-Px86_64 -Twin64   \
-		-Fusrc_pp/fpc      \
-		-Fu.asm/src_pp/rtl \
-		-Fu.asm/src_pp/fpv \
-		-Fu.asm/src_pp/win \
-		-Fu.asm/src_pp/qt5 \
-		-Fu.asm/src_pp/vcl \
+		-Fusrc_pp/fpc \
+        -Fusrc_pp/rtl \
+		-Fusrc_pp/fpv \
+		-Fusrc_pp/win \
+		-Fusrc_pp/qt5 \
+		-Fusrc_pp/vcl \
 		-o$@ $<
 
 $(OBJ_DIR)/test/%.o: $(ASM_DIR)/test/%.s
 	$(call strip_compiler,$<)
-	$(CC) $(CFLAGS) -o $@ -c $<
-	
+	@$(CC) $(CFLAGS) -o $@ -c $<
+
 $(SAMPLE_DIR)/%$(EXEC_FILEEXT): $(OBJ_DIR)/test/%.o
-	$(CC) -nostartfiles -nostdlib       \
-		-Wl,--entry=PASCALMAIN -o $@ $^ \
+	@$(CC) -m64 -o $(OBJ_DIR)/test/test1.u.o -c $(SAMPLE_DIR)/test1.u.s
+	@$(CC) -nostartfiles -nostdlib      \
+		-Wl,--entry=PASCALMAIN -o $@ $^ $(OBJ_DIR)/test/test1.u.o \
 		-L$(DLL_DIR) \
 		-llaz_fpc    \
 		-llaz_rtl    \
 		-llaz_win    -lkernel32 -luser32
-	$(STRIP) $@
-	$(COPY)  $@ dllx64/test1.exe
+	@$(STRIP) $@
+	@$(COPY)  $@ dllx64/test1.exe
 
 # -------------------------------------------
 # just a note, that compile process is done.
@@ -699,7 +705,7 @@ state_end: $(SAMPLE_EXE)
 .PHONY: clean premake docs
 
 docs:
-	doxygen devdoc.cfg
+	@doxygen devdoc.cfg
 
 # -------------------------------------------
 # this section, create temporary folder's ...
@@ -713,25 +719,26 @@ DIR_FOLDERS = \
 PRE_FOLDERS = fpc fpv qt5 rtl vcl win test
 
 premake:
-	$(foreach folder,$(DIR_FOLDERS),$(MKDIR) $(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(OBJ_DIR)/$(CPP_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(OBJ_DIR)/$(PAS_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(ASM_DIR)/$(CPP_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(ASM_DIR)/$(PAS_SRC)/$(folder) && ) true
-	$(MKDIR) $(DLL_DIR)
-	$(MKDIR) $(ASM_DIR)/test
-	$(MKDIR) $(OBJ_DIR)/test
+	@$(ECHO) create compiler folders ...
+	@$(foreach folder,$(DIR_FOLDERS),$(MKDIR) $(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(OBJ_DIR)/$(CPP_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(OBJ_DIR)/$(PAS_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(ASM_DIR)/$(CPP_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(MKDIR) $(ASM_DIR)/$(PAS_SRC)/$(folder) && ) true
+	@$(MKDIR) $(DLL_DIR)
+	@$(MKDIR) $(ASM_DIR)/test
+	@$(MKDIR) $(OBJ_DIR)/test
 
 # -------------------------------------------
 # this target, remove all temporary files ...
 # -------------------------------------------
 clean:
 	@$(ECHO) delete source folder crap ...
-	$(RM)    sample/*.exe
-	$(RM)    sample/*.dll
-	$(foreach folder,$(PRE_FOLDERS),$(RM) $(OBJ_DIR)/$(CPP_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(RM) $(OBJ_DIR)/$(PAS_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(CPP_SRC)/$(folder) && ) true
-	$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(PAS_SRC)/$(folder) && ) true
-	$(foreach folder,$(DIR_FOLDERS),$(RM) $(folder) && ) true
-	$(RM) $(DLL_DIR)
+	@$(RM)    sample/*.exe
+	@$(RM)    sample/*.dll
+	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(OBJ_DIR)/$(CPP_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(OBJ_DIR)/$(PAS_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(CPP_SRC)/$(folder) && ) true
+	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(PAS_SRC)/$(folder) && ) true
+	@$(foreach folder,$(DIR_FOLDERS),$(RM) $(folder) && ) true
+	@$(RM) $(DLL_DIR) 1>nul: 2>nul:

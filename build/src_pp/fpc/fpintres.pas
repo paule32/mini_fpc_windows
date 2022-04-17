@@ -4,4 +4,5 @@ interface
 
 implementation
 
+begin
 end.

@@ -19,9 +19,8 @@ void fpc_initializeunits (void)
 FPC_BEGIN
 FPC_END
 
-void fpc_ansistr_decr_ref(void *p)
-FPC_BEGIN
-FPC_END
+void fpc_ansistr_decr_ref(void *p)              FPC_BEGIN FPC_END
+void fpc_ansistr_assign  (void *dst, void *src) FPC_BEGIN FPC_END
 
 END_FPC_NS
 END_MANGLE

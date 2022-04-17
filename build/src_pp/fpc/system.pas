@@ -216,7 +216,7 @@ type
 		property vParent: PVmt read GetvParent;
 	end;
 
-procedure fpc_ansistr_assign (var DestS: Pointer; S2: Pointer); compilerproc;
+//procedure fpc_ansistr_assign (var DestS: Pointer; S2: Pointer); compilerproc;
 
 procedure fpc_ansistr_decr_ref(Var S  : Pointer); compilerproc;
 
@@ -261,14 +261,9 @@ begin end;
 procedure fpc_iocheck; compilerproc;
 begin end;
 
-procedure AnsiStrAssign(var lhs: Pointer; rhs: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
-procedure fpc_ansistr_assign (Var DestS: Pointer; S2: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
+//procedure AnsiStrAssign (var lhs: Pointer; rhs: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
+//procedure fpc_ansistr_assign (Var DestS: Pointer; S2: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
 
-(*procedure fpc_AnsiStr_Assign (var DestS: Pointer; S2: Pointer); [public, Alias: 'FPC_ANSISTR_ASSIGN']; compilerproc;
-begin
-//  AnsiStrAssign(DestS,S2);
-end;*)
-//procedure fpc_AnsiStr_Assign (Var S1:    Pointer; S2: Pointer); [external name  'FPC_ANSISTR_ASSIGN']; compilerproc; begin end;
 
 procedure fpc_AnsiStr_decr_ref(var s: Pointer); [public, alias: 'FPC_ANSISTR_DECR_REF']; compilerproc;
 begin end;

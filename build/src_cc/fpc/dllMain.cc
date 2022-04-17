@@ -14,6 +14,8 @@
 // return positive, non-zero; else you get system error.
 // ----------------------------------------------------------
 __asm__(
+".text                    \n"
+".p2align 4               \n"
 ".globl DllMainCRTStartup \n"
 "DllMainCRTStartup:	  \n"
 	"movq $1, %rax	  \n"
