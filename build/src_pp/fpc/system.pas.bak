@@ -5,6 +5,7 @@
 // only for non-profit usage !!!
 // ----------------------------------------------------------
 {$mode delphi}
+{$calling cdecl}
 unit system;
 
 interface
@@ -19,11 +20,15 @@ type Cardinal = LongWord;
 type DWord    = LongWord;
 type UInt32   = Cardinal;
 type SizeUInt = DWord;
-
 type CodePointer = Pointer;
+
+type RawByteString = AnsiString;
+
 type PShortString = ^ShortString;
 
 type HRESULT  = LongInt;
+
+type TSystemCodePage = Word;
 
 type
 	PJmp_buf = ^jmp_buf;
@@ -216,11 +221,15 @@ type
 		property vParent: PVmt read GetvParent;
 	end;
 
-procedure fpc_ansistr_assign (var DestS: Pointer; S2: Pointer); compilerproc;
+procedure fpc_ShortStr_To_ShortStr(out res:shortstring; const sstr: shortstring); compilerproc;
+function  fpc_ShortStr_To_AnsiStr (Const S2 : ShortString; cp : TSystemCodePage): RawByteString; compilerproc;
 
+procedure fpc_AnsiStr_Assign (Var DestS: Pointer; S2 : Pointer); [Public, Alias: 'FPC_ANSISTR_ASSIGN' ];  compilerproc;
 procedure fpc_ansistr_decr_ref(Var S  : Pointer); compilerproc;
 
 function  fpc_get_input: PText;         compilerproc;
+function  fpc_get_output:PText;         compilerproc;
+
 procedure fpc_iocheck;                  compilerproc;
 procedure fpc_readln_end(var f: Text);	compilerproc;
 
@@ -242,6 +251,10 @@ implementation
 procedure fpc_initializeunits; //cdecl; external name 'fpc_initializeunits';
 begin end;
 
+Function fpc_get_input:PText;compilerproc; begin end;
+Function fpc_get_output:PText;compilerproc; begin end;
+
+
 function TVmt.GetvParent: PVMT;
 begin
 	result := nil;
@@ -261,8 +274,19 @@ begin end;
 procedure fpc_iocheck; compilerproc;
 begin end;
 
-procedure AnsiStrAssign (var lhs: Pointer; rhs: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
-procedure fpc_ansistr_assign (Var DestS: Pointer; S2: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
+procedure fpc_shortstr_to_shortstr(out res: ShortString; const sstr: ShortString); compilerproc;
+begin
+end;
+function  fpc_ShortStr_To_AnsiStr (Const S2 : ShortString; cp : TSystemCodePage): RawByteString;
+begin
+end;
+
+//procedure AnsiStrAssign (var lhs: Pointer; rhs: Pointer); cdecl; external 'laz_rtl.dll' name 'AnsiStrAssign';
+procedure fpc_AnsiStr_Assign (Var DestS: Pointer; S2 : Pointer);[Public, Alias: 'FPC_ANSISTR_ASSIGN' ];  compilerproc;
+begin end;
+{ alias for internal use }
+procedure fpc_AnsiStr_Assign (Var S1 : Pointer;S2 : Pointer); [external name 'FPC_ANSISTR_ASSIGN'];
+
 
 
 procedure fpc_AnsiStr_decr_ref(var s: Pointer); [public, alias: 'FPC_ANSISTR_DECR_REF']; compilerproc;

@@ -5,6 +5,7 @@
 // only for non-profit usage !!!
 // ----------------------------------------------------------
 {$mode delphi}
+{$calling cdecl}
 unit utils;
 
 interface

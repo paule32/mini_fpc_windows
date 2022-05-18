@@ -1,0 +1,13 @@
+EXPORTS
+fpc_ansistr_assign
+fpc_ansistr_decr_ref
+fpc_do_exit
+FPC_DO_EXIT
+fpc_get_input
+fpc_initializeunits
+FPC_INITIALIZEUNITS
+fpc_iocheck
+fpc_readln_end
+FPC_READLN_END
+fpc_shortstr_to_ansistr
+fpc_shortstr_to_shortstr

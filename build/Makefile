@@ -43,6 +43,7 @@ FPC       = fpc     # tests with 3.2.0
 GDB       = gdb     # command line
 ASM       = as      # GNU assembler
 DLLTOOL   = dlltool # Windows 11 .DEF / .DLL tool
+EXIT      = exit    # MS-Dos exit batch file
 NM        = nm
 
 # ---------------------------------------------------------
@@ -64,7 +65,7 @@ CFLAGS    = -m64 -I. -O2 -DAPP_TYPE=$(APP_TYPE) -D$(OS_PLATFORM) \
             -Wno-delete-incomplete \
             -Wno-write-strings
 FPC_FLAGS = -CF32 -a -al -n -sh -st -Ur -Xd -Xe -Xm -WA -WR \
-            -O2 -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
+            -O2 -Mdelphi -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
             -Px86_64 -Twin64
 GDB_FLAG  = -ggdb
 
@@ -297,7 +298,7 @@ FPC_FLAGS += -Fu$(UNIT_DIR)/$(PAS_ASM)/vcl
 #
 Laz_DOL = '$$'
 #
-Forms_TForm          =   FORMS$(Laz_DOL)_$(Laz_DOL)TOBJECT_$(Laz_DOL)__$(Laz_DOL)$(Laz_DOL)
+Forms_TForm          = FORMS$(Laz_DOL)_$(Laz_DOL)TOBJECT_$(Laz_DOL)__$(Laz_DOL)$(Laz_DOL)
 #
 TVision_TObject      = TVISION$(Laz_DOL)_$(Laz_DOL)TOBJECT_$(Laz_DOL)__$(Laz_DOL)$(Laz_DOL)
 TVision_TPalette     = TVISION$(Laz_DOL)_$(Laz_DOL)TPALETTE_$(Laz_DOL)__$(Laz_DOL)$(Laz_DOL)
@@ -342,6 +343,8 @@ define fpc_def =
 	@$(ECHO) fpc_iocheck                   >> $(1)
 	@$(ECHO) fpc_readln_end                >> $(1)
 	@$(ECHO) FPC_READLN_END                >> $(1)
+    @$(ECHO) fpc_shortstr_to_ansistr       >> $(1)
+    @$(ECHO) fpc_shortstr_to_shortstr      >> $(1)
 endef
 
 # ------------------------------------------------------
@@ -451,8 +454,10 @@ sed_sec    =^\.section[[:space:]]*\.
 sed_dbgbeg =^\#[[:space:]]*Begin[[:space:]]*asmlist[[:space:]]*al_dwarf_frame
 sed_dbgend =^\#[[:space:]]*End[[:space:]]*asmlist[[:space:]]*al_dwarf_frame
 
+sed_comma  = $(shell printf ",")
+
 define shlp =
-	@$(SED) -i $(1) $(2)
+	$(SED) -i $(1) $(2)
 endef
 
 # -------------------------------------------------------------
@@ -463,7 +468,7 @@ endef
 # stackoverflow research.
 # -------------------------------------------------------------
 define strip_compiler =
-	@$(ECHO) remove compiler crap off: $(1)
+	@printf 'remove compiler crap: %s ... ' "$(1)"
     $(call shlp,$(subst ,$(;),'/$(sed_dbgbeg)/,/$(sed_dbgend)/d'),$(1))
 	$(call shlp,$(subst ,$(;),'/$(sed_asmbeg)_dwarf_frame/,/$(sed_asmend)_dwarf_frame/d'),$(1))
 	$(call shlp,$(subst ,$(;),'/$(sed_asmbeg)_globals/,/$(sed_asmend)_globals/d'),$(1))
@@ -500,16 +505,23 @@ define strip_compiler =
 	$(call shlp,'/^\.globl[[:space:]]*INITFINAL/d',$(1))
 	$(call shlp,$(subst ,$(;),'s/^[[:space:]]*call[[:space:]]*fpc_do_exit/movl $$0, \%ecx\nmovq __imp_ExitProcess(\%rip), \%rax\ncall \*\%rax/'),$(1))
 	$(call shlp,$(subst ,$(;),'/^[[:space:]]*\.ident[[:space:]]*.*GCC\:/d'),$(1))
+	$(call $hlp,$(subst ,$(;),'s/^\.section\s*\.rodata\.n_.*\,\"d\"/^\.section \.data),$(1))
+    sed -i -e 's/^\s*\.section\s*\.rodata\.n\_\.Ld[0-9]+,\"d\"/,+5 d' $1
+    @printf 'success.\n'
 endef
 
 define compile_strip =
-	@$(call strip_compiler,$(2))
+	$(call strip_compiler,$(2))
+    @printf "assemble %s ... " "$(2)"
 	@$(CC) $(CFLAGS) -o $(1) -c $(2)
+    @printf "success\n"
 endef
 
 define pp_compile_strip =
+	@printf "create assembly: %s ... " "$(1)"
 	@$(FPC) -al -Aas $(FPC_FLAGS) -o$(1) $(2)
-	@$(call strip_compiler,$(1))
+    @printf "success\n"
+	$(call strip_compiler,$(1))
 	@$(CC) $(CFLAGS) \
 		-o $(subst $(ASM_DIR),$(OBJ_DIR),$(subst .s,.o,$(1))) \
 		-c $(1)
@@ -522,11 +534,12 @@ endef
 # .o bject's in parameter 2.
 # ------------------------------------------------------
 define make_dll =
-	@$(ECHO) create DLL $(1) ...
+	@printf "create DLL: %s ... " $(1)
 	@$(CC) -nostdlib -m64 -shared -o \
 	$(subst lib,,$(1)) $(2) -lkernel32 -luser32
 	@$(NM)  $(subst lib,,$(1)) | grep " T " | sed 's/.* T //' \
 	>   $(subst lib,,$(subst .dll,.def.tmp,$@))
+	@printf "success\n"
 endef
 
 # ------------------------------------------------------
@@ -613,7 +626,7 @@ $(DLL_DIR)/liblaz_win.a: $(DLL_DIR)/laz_win.def ; $(call dll_a,$@,$<)
 # simple prints text for sign the start-uo.
 # ---------------------------------------------
 state_begin: clean premake
-	@$(ECHO) compile files, this can take some time ...
+	@printf "compile files, this can take some time ...\n"
 
 # ---------------------------------------------
 # template: compile .pas to .s assembler.
@@ -667,37 +680,45 @@ SAMPLE_DIR = sample
 SAMPLE_EXE = $(SAMPLE_DIR)/test1$(EXEC_FILEEXT)
 
 $(ASM_DIR)/test/%.s: $(SAMPLE_DIR)/%.pas
+	@printf "compile: %s ... " "$<"
 	@$(FPC) -al -Aas -CF32 -a -al -n -sh -st -Ur -Xd -Xe -Xm -WA -WR \
-		-O2 -Mdelphi -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
-		-Px86_64 -Twin64   \
-		-Fusrc_pp/fpc \
-        -Fusrc_pp/rtl \
-		-Fusrc_pp/fpv \
-		-Fusrc_pp/win \
-		-Fusrc_pp/qt5 \
-		-Fusrc_pp/vcl \
-		-o$@ $<
+	-O2 -OoPEEPHOLE -OoREMOVEEMPTYPROCS \
+	-Px86_64 -Twin64   \
+	-Fusrc_pp/fpc \
+	-Fusrc_pp/rtl \
+	-Fusrc_pp/fpv \
+	-Fusrc_pp/win \
+	-Fusrc_pp/qt5 \
+	-Fusrc_pp/vcl \
+	-o$@ $<
+	@printf "success\n"
 
 $(OBJ_DIR)/test/%.o: $(ASM_DIR)/test/%.s
 	$(call strip_compiler,$<)
 	@$(CC) $(CFLAGS) -o $@ -c $<
 
 $(SAMPLE_DIR)/%$(EXEC_FILEEXT): $(OBJ_DIR)/test/%.o
+	@printf "create sample: %s ... " "$@"
 	@$(CC) -m64 -o $(OBJ_DIR)/test/test1.u.o -c $(SAMPLE_DIR)/test1.u.s
-	@$(CC) -nostartfiles -nostdlib      \
-		-Wl,--entry=PASCALMAIN -o $@ $^ $(OBJ_DIR)/test/test1.u.o \
-		-L$(DLL_DIR) \
-		-llaz_fpc    \
-		-llaz_rtl    \
-		-llaz_win    -lkernel32 -luser32
+	@$(CC) -nostartfiles -nostdlib \
+	-Wl,--entry=PASCALMAIN -o $@ $^ $(OBJ_DIR)/test/test1.u.o \
+	-L$(DLL_DIR) \
+	-llaz_fpc    \
+	-llaz_rtl    \
+	-llaz_win    -lkernel32 -luser32
+	@printf "\nsuccess.\nremove debug symbols: %s ... \n" "$@"
 	@$(STRIP) $@
-	@$(COPY)  $@ dllx64/test1.exe
+	@$(COPY) $@ dllx64/test1.exe
+	@$(COPY) .asm/test/test1.s sample/test1.s
+	@printf "The comming Error is no real Error !\n"
+	$(shell exit 1)
 
 # -------------------------------------------
 # just a note, that compile process is done.
 # -------------------------------------------
 state_end: $(SAMPLE_EXE)
 	@$(ECHO) done.
+	@$(EXIT) 0
 
 # -------------------------------------------
 # target's handled by env. parameter ...
@@ -741,4 +762,4 @@ clean:
 	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(CPP_SRC)/$(folder) && ) true
 	@$(foreach folder,$(PRE_FOLDERS),$(RM) $(ASM_DIR)/$(PAS_SRC)/$(folder) && ) true
 	@$(foreach folder,$(DIR_FOLDERS),$(RM) $(folder) && ) true
-	@$(RM) $(DLL_DIR) 1>nul: 2>nul:
+	@$(RM) $(DLL_DIR)
