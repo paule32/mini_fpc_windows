@@ -1,0 +1,57 @@
+# ----------------------------------------------------------------
+# This Makefile is part of RTL.
+#
+# (c) Copyright 2022 Jens Kallup - paule32
+# only for non-profit usage !!!
+#
+# You should use the script: build.sh to use this Makefile right !
+# I have assume GNU make.exe; but other Makefile tools can differ.
+# ----------------------------------------------------------------
+MAKE_LANG    = "Deutsch"
+MAKE_ERROR   = "Fehler"
+MAKE_SUCCESS = "Erfolgreich"
+MAKE_HASERR  = "Erstellung enthält Fehler !"
+MAKE_ABORT   = "Erstell-Prozess wurde unterbrochen."
+MAKE_WRONGP  = "DEVTERM fehlt oder hat falsche Parameter."
+MAKE_WELCOME = "Willkommen"
+MAKE_CHKSYS  = "System-Überprüfung auf benötigte Einstellungen und Tools ..."
+MAKE_COMNOTE = "Quelldateien übersetzen:"
+MAKE_OBJDIRS = "temporäre Object-Datei-Verzeichnisse ..."
+MAKE_CREATE1 = "erstelle"
+MAKE_CREATE  = $(MAKE_CREATE1) $(MAKE_OBJDIRS)
+MAKE_REMOVE  = "Lösche" $(MAKE_OBJDIRS)
+MAKE_DEVENV  = "Entwicklungs-Umgebung"
+MAKE_NOSFRM  = "keine unterstütze" $(MAKE_DEVENV) $(MAKE_FOUND)"."
+MAKE_HAVDEV  = $(MAKE_DEVENV) $(MAKE_FOUND)
+MAKE_NOCCOMP = "Compiler $(MAKE_FOUND)."
+MAKE_NOPPDEV = "kein C++ $(MAKE_NOCCOMP)"
+MAKE_NOCCDEV = "kein C $(MAKE_NOCCOMP)"
+MAKE_NOSUPP  = "wird nicht unterstützt"
+MAKE_FOUND   = "gefunden"
+MAKE_AND     = "und"
+MAKE_DONE    = "fertig."
+
+# ----------------------------
+# string place holders ...
+# ----------------------------
+MAKE_SUCCOK  = $(color_info)$(MAKE_OKAY) $(MAKE_HAVDEV)":"  \
+               $(color_white)"$(DEV_OS)"$(MAKE_COMMA)       \
+               "$(DEV_TERM)"$(MAKE_COMMA) $(MAKE_AND)       \
+               $(MAKE_LANG) $(color_normal)
+MAKE_NOCC    = $(call moveback,$(MAKE_NOCCDEV))
+MAKE_NOPP    = $(call moveback,$(MAKE_NOPPDEV))
+
+# ----------------------------
+# unicode big   gernan umlauts
+# ----------------------------
+CHAR_BIGAE  = "\\\u00c4"
+CHAR_BIGOE  = "\\\u00d6"
+CHAR_BIGUE  = "\\\u00dc"
+CHAR_BIGSZ  = "\\\u00df"
+# ----------------------------
+# unicode small gernan umlauts
+# ----------------------------
+CHAR_MINAE  = "\\\u00e4"
+CHAR_MINOE  = "\\\u00f6"
+CHAR_MINUE  = "\\\u00fc"
+CHAR_MINSZ  = "\\\u00df"

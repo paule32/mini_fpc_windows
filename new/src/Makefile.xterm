@@ -1,0 +1,18 @@
+# ----------------------------------------------------------------
+# This Makefile is part of RTL.
+#
+# (c) Copyright 2022 Jens Kallup - paule32
+# only for non-profit usage !!!
+#
+# You should use the script: build.sh to use this Makefile right !
+# I have assume GNU make.exe; but other Makefile tools can differ.
+# ----------------------------------------------------------------
+
+# --------------------------------------------------
+# this section describe the terminal colors that you
+# can use, if you have ANSI supported console ...
+# --------------------------------------------------
+color_normal = "\033[0;37;40m"
+color_error  = "\033[1;37;44m"
+color_info   = "\033[1;93;40m"
+color_white  = "\033[1;37;40m"

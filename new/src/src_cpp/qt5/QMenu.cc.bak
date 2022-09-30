@@ -1,0 +1,212 @@
+// ---------------------------------------------------------------------------
+// File:        QMenu.cc
+// Author:      Jens Kallup - paule32 <kallup-dev@web.de>
+// Copyright:   (c) 2022 kallup non-profit
+//
+// License:     non-profit * only for education, and trial !!!
+//              All modifications needs to query to the original author's (me).
+//              You can use it at Your school as teacher for education.
+//              But commercial usage is not allowed.
+//
+// Description: Qt5 is a GUI framework formed by Nokia in 2011, Norway.
+//              This implementation is not complete. But can be a step,
+//              to depth into the magic of gui programming with FPC-OOP
+// ---------------------------------------------------------------------------
+# include "pch.hpp"
+
+// ---------------------------------------------------------------------------
+// @brief  FPC namespace for QMenuBar interface
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+BEGIN_NAMESPACE(FPC)
+QMenuBar::QMenuBar(FPC::QWidget *parent)
+{
+    ::std::cout << "ctor QWidget menubar" << ::std::endl;
+    qMenuBarParent = parent;
+    qMenuBarOwner  = new ::QMenuBar(parent->getOwner());
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar default constructor - ctor
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+QMenuBar::QMenuBar() { }
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar destructor - dtor
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+QMenuBar::~QMenuBar(void) {
+    ::std::cout << "dtor QWidget" << ::std::endl;
+    delete qMenuBarOwner;
+}
+
+// ---------------------------------------------------------------------------
+// @brief  set/get QMenuBar
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+void      FPC::QMenuBar::addMenu   (FPC::QMenu *menu) { getOwner()->addMenu(menu->getOwner()); }
+//QMenuBar* FPC::QMenuBar::getMenuBar() const           { return qMenuBarOwner;   }
+//QMenuBar* FPC::QMenuBar::menuBar   () const           { return qMenuBarOwner;   }
+
+void QMenuBar::show(void) { qMenuBarOwner->show(); }
+void QMenuBar::hide(void) { qMenuBarOwner->hide(); }
+
+END_NAMESPACE
+
+// ---------------------------------------------------------------------------
+// @brief  FPC namespace for QMenu interface
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+BEGIN_NAMESPACE(FPC)
+QMenu::QMenu(::std::string title, FPC::QMenuBar* parent)
+{
+    ::std::cout << "zzttt" << ::std::endl;
+    if (parent == nullptr)
+    ::std::cout << "nullller" << ::std::endl;
+    ::std::cout << "--------" << ::std::endl;
+    
+    qMenuOwner  = new ::QMenu(::QString(title.c_str()),parent->getOwner());
+    ::std::cout << "pappa" << ::std::endl;
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenu default constructor
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+QMenu::QMenu() {
+    qMenuOwner = new ::QMenu(::QString("MenuItem"), nullptr);
+}
+
+// ---------------------------------------------------------------------------
+// @brief  set/get title of a QMenu item
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// ---------------------------------------------------------------------------
+void        QMenu::setTitle(::std::string title) {        qMenuOwner->setTitle(title.c_str()); }
+std::string QMenu::getTitle() const              { return qMenuOwner->title().toStdString();   }
+std::string QMenu::title   () const              { return qMenuOwner->title().toStdString();   }
+
+QMenu::~QMenu()
+{
+    ::std::cout << "dtor QMenu" << ::std::endl;
+   // delete qMenuPtr;
+}
+END_NAMESPACE
+
+// ---------------------------------------------------------------------------
+// @brief  QMenu dynamic library C wrapper function for using C++ Qt5 framew.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenur::QMenu(std::string title, QMenuBar* parent)
+// @param  title - void*
+//         => A pointer to an 0 terminated String for the menu item title.
+//         void* - Pointer
+//         => A pointer to an existing QMenuBar instance.
+// @return A pointer to the QMenu item
+// @author paule32
+// @since  Version 1.0
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void*)
+QMenu_Create1(const char* title, void* parent)
+{
+    ::std::string str(title);
+    ::std::cout << "meoooooo 0x " << ::std::hex << parent << ::std::endl;
+    FPC::QMenu* ptr = new FPC::QMenu(str);
+    ptr->setMenuBar(static_cast<FPC::QMenuBar*>(parent));
+    ::std::cout << "hululu" << std::endl;
+    return ptr;
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenuBar::QMenuBar(QWidget* parent)
+// @param  nothing
+// @return A pointer to QMenu()
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void*)
+QMenu_Create2()
+{
+    FPC::QMenu* ptr = new FPC::QMenu();
+    return ptr;
+}
+
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void)
+QMenu_SetTitle(char *title, void *ptr){
+    ::std::string t(title);
+    static_cast<QMenu*>(ptr)->setTitle(static_cast<const char*>(t.c_str()));
+}
+DLL_EXPORT(const char*)
+QMenu_GetTitle(void *ptr){
+    ::std::string tstr(static_cast<QMenu*>(ptr)->title().toStdString());
+    return static_cast<const char*>(tstr.c_str());
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenu dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenur::~QMenu()
+// @param  nothing - destructor
+// @return nothing
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void)
+QMenu_Destroy(void *ptr){
+    if (ptr != nullptr)
+    delete static_cast<FPC::QMenu*>(ptr);
+}
+
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenuBar::QMenuBar(QWidget* parent)
+// @param  void* - Pointer
+//         A pointer to a QWidget class
+// @return A pointer to the new created QMenuBar
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void*)
+QMenuBar_Create1(void* parent){
+    std::cout << "qmenubar ctorpar" << std::endl;
+    if (parent == nullptr)
+        std::cout << "errrrrrrr\n";
+    FPC::QMenuBar *ptr = new FPC::QMenuBar(static_cast<QWidget*>(parent));
+    std::cout << "uooooop" << std::endl;
+    return ptr;
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenuBar::Create()
+// @param  nothing - default constructor
+// @return void* - Pointer
+//         A pointer to the QMenuBar class
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void*)
+QMenuBar_Create2(){
+    FPC::QMenuBar *ptr = new FPC::QMenuBar(nullptr);
+    return ptr;
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenuBar::~QMenuBar()
+// @param  nothing - destructor
+// @return nothing
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void)
+QMenuBar_Destroy(void *ptr){
+    if (ptr != nullptr)
+    delete static_cast<FPC::QMenuBar*>(ptr);
+}
+
+// ---------------------------------------------------------------------------
+// @brief  QMenuBar dynamic library C wrapper function for using C++ Qt5 fw.
+//         The current version 1.0 is fully tested under Microsoft Windows 10
+// @ctx    QMenuBar::show()
+// @ctx    QMenuBar::hide()
+// ---------------------------------------------------------------------------
+DLL_EXPORT(void) QMenuBar_Show(void *ptr) { static_cast<FPC::QMenuBar*>(ptr)->show(); }
+DLL_EXPORT(void) QMenuBar_Hide(void *ptr) { static_cast<FPC::QMenuBar*>(ptr)->hide(); }

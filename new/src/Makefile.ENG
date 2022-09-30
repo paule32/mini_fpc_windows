@@ -1,0 +1,46 @@
+# ----------------------------------------------------------------
+# This Makefile is part of RTL.
+#
+# (c) Copyright 2022 Jens Kallup - paule32
+# only for non-profit usage !!!
+#
+# You should use the script: build.sh to use this Makefile right !
+# I have assume GNU make.exe; but other Makefile tools can differ.
+# ----------------------------------------------------------------
+MAKE_LANG    = "Entlish"
+MAKE_ERROR   = "Error"
+MAKE_SUCCESS = "Success"
+MAKE_HASERR  = "build contain error(s) !"
+MAKE_ABORT   = "build process aborted."
+MAKE_WRONGP  = "DEVTERM missing or has wrong parameter."
+MAKE_WELCOME = "Welcome"
+MAKE_CHKSYS  = "check the system for needed settings, and tools ..."
+MAKE_COMNOTE = "compile source code's:"
+MAKE_TMPDIRS = "temp object folders"
+MAKE_CREATE1 = "create"
+MAKE_CREATE  = "$(MAKE_CREATE1) $(MAKE_TMPDIRS) ..."
+MAKE_REMOVE  = "delete $(MAKE_TMPDIRS) crap ..."
+MAKE_DEVENV  = "development environment"
+MAKE_NOSFRM  = "$(NOAUPP) $(MAKE_DEVENV) $(MAKE_FOUND)."
+MAKE_HAVDEV  = "$(MAKE_DEVENV) $(MAKE_FOUND)"
+MAKE_NOCCOMP = "Compiler not $(MAKE_FOUND)"
+MAKE_NOPPDEV = "C++ $(MAKE_NOCCOMP)."
+MAKE_NOCCDEV = "C $(MAKE_NOCCOMP)."
+MAKE_NOSUPP  = "not supported"
+MAKE_FOUND   = "found"
+MAKE_AND     = "and"
+MAKE_DONE    = "done."
+# ---------------------------
+# mapped big   gernan umlauts
+# ---------------------------
+CHAR_BIGAE   = "AE"
+CHAR_BIGOE   = "OE"
+CHAR_BIGUE   = "UE"
+CHAR_BIGSZ   = "SZ"
+# ---------------------------
+# mapped small gernan umlauts
+# ---------------------------
+CHAR_MINAE   = "ae"
+CHAR_MINOE   = "oe"
+CHAR_MINUE   = "ue"
+CHAR_MINSZ   = "sz"

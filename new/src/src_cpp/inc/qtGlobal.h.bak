@@ -1,0 +1,56 @@
+// ----------------------------------------------------------------------------
+// File:        qtGlobal.h
+// Author:      Jens Kallup - paule32 <kallup-dev@web.de>
+// Copyright:   (c) 2022 kallup non-profit
+//
+// License:     non-profit * only for education, and trial !!!
+//              All modifications needs to query to the original author's (me).
+//              You can use it at Your school as teacher for education.
+//              But commercial usage is not allowed.
+//
+// Description: Qt5 is a GUI framework formed by Nokia in 2011, Norway.
+//              This implementation is not complete. But can be a step,
+//              to depth into the magic of gui programming with FPC-OOP
+// ----------------------------------------------------------------------------
+#pragma once
+#ifndef QTGLOBAL_H_
+#define QTGLOBAL_H_
+
+# include <iostream>
+# include <vector>
+# include <map>
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <stdint.h>
+
+// ----------------------------------------------------------------------------
+// global data types ...
+// ----------------------------------------------------------------------------
+typedef uint8_t  BYTE    ;
+typedef uint16_t WORD    ;
+typedef uint32_t DWORD   ;
+typedef uint64_t QWORD   ;
+
+typedef BYTE     ByteBool;
+typedef WORD     WordBool;
+typedef DWORD    LongBool;
+
+typedef BYTE     BOOLEAN ;
+typedef ByteBool BOOL    ;
+
+# undef  BEGIN_NAMESPACE
+# define BEGIN_NAMESPACE(x)  namespace x {
+
+# undef  END_NAMESPACE
+# define END_NAMESPACE       }
+
+# define DLL_EXPORT(x) extern "C" x __declspec(dllexport)
+# define DLL_IMPORT(x) extern "C" x __declspec(dllimport)
+
+extern void* check_pointer(void *ptr);
+extern void* get_pointer  (void *ptr);
+
+extern BOOL  check_initialize_library(void);
+#endif

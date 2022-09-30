@@ -1,0 +1,52 @@
+// ----------------------------------------------------------------------------
+// File:        QObject.cc
+// Author:      Jens Kallup - paule32 <kallup-dev@web.de>
+// Copyright:   (c) 2022 kallup non-profit
+//
+// License:     non-profit * only for education, and trial !!!
+//              All modifications needs to query to the original author's (me).
+//              You can use it at Your school as teacher for education.
+//              But commercial usage is not allowed.
+//
+// Description: Qt5 is a GUI framework formed by Nokia in 2011, Norway.
+//              This implementation is not complete. But can be a step,
+//              to depth into the magic of gui programming with FPC-OOP
+// ----------------------------------------------------------------------------
+# include "pch.hpp"
+
+BEGIN_NAMESPACE(FPC)
+QObject::QObject(QObject *parent){
+    if (parent == nullptr) {
+        parent  = new QObject();
+    }
+    ptrParent = parent;
+}
+
+QObject::QObject(void){
+}
+
+QObject::~QObject(void) {
+}
+END_NAMESPACE
+
+DLL_EXPORT(void*)
+QObject_Create(void) {
+    std::cout << "ctor QObject" << std::endl;
+    FPC::QObject *ptr = new FPC::QObject();
+    return ptr;
+}
+
+DLL_EXPORT(void*)
+QObject_Create_QObject(void *ptr) {
+    std::cout << "ctor QObject( parent )" << std::endl;
+    FPC::QObject *ptr_ptr = new FPC::QObject(static_cast<FPC::QObject*>(ptr));
+    return ptr_ptr;
+}
+
+DLL_EXPORT(void)
+QObject_Destroy(void *ptr) {
+    std::cout << "dtor QObject" << std::endl;
+    if (ptr != nullptr)
+    delete static_cast<FPC::QObject*>(ptr);
+}
+
